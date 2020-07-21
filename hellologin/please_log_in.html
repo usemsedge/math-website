@@ -1,9 +1,19 @@
 <html>
     <head>
-        <h1>Home</h1>
+        <a href="/" style="font-size: 60;">Home</a>
     </head>
     <body>
 
         <h5>Please login to view this page.</h5>
+        <h5>You will be redirected to the login page in 5 seconds.</h5>
     </body>
 </html>
+
+<script>
+    window.setTimeout(function(){
+
+    // Move to a new location or you can do something else
+    window.location.href = "/";
+
+    }, 5000);
+</script>

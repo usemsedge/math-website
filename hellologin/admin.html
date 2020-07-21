@@ -1,5 +1,5 @@
 <html>
-    <head>
+        <head>
         <meta charset="utf-8">
         <title>Login Form</title>
         <style>
@@ -33,17 +33,31 @@
 			color: #ffffff;
 		}
         </style>
-	</head>
-    <body>
+    </head>
 		
+    <body>
         <div class="login-form">
-            <h1>Login Form</h1>
-            <form action="auth" method="POST">
-                <input type="text" name="username" placeholder="username" required>
-				<input type="password" name="password" placeholder="Password" required>
-				<input type="submit">
+            <h1>Send Email To All Users</h1>
+            <form>
+                <input type="text" name="subject" placeholder="Subject" required>
+				<input type="text" name="text" placeholder="Text" required>
+				<input type="submit" onclick="f()">
             </form>
 		</div>
-		<a href="/register"><p style="text-align:center;">Register</p></a>
     </body>
 </html>
+
+<script>
+    function f(){
+		console.log(document.getElementById('text').innerText, document.getElementById('subject').innerText);
+        var url = `/email?subject=${document.getElementById('subject').innerText}&text=${document.getElementById('text').innerText}&correct=${correct}`;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/html',
+            },
+            body: ''
+        });
+    }
+
+</script>

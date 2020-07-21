@@ -1,5 +1,15 @@
 "use strict";
 
+var num_1 = [1, 2];
+
+var num_2 = [1, 3];
+
+var tries = 3;
+
+
+//document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString();
+
+
 
 
 
@@ -24,6 +34,7 @@ function reduce(frac){
       return b ? gcd(b, a%b) : a;
     };
     gcd = gcd(num, den);
+
     return [num/gcd, den/gcd];
   }
 
@@ -33,12 +44,13 @@ function reduce(frac){
 
 function factorize() {
 
-    setCookie("incorrect", incorrect);
-    setCookie("correct", correct);
-
 
     var correct_ans = add_fractions(num_1, num_2);
     correct_ans = reduce(correct_ans);
+
+    if (correct_ans[1] == 1) {
+        correct_ans = correct_ans[0];
+    }
 
 
     var ans = document.getElementById("ans").value;
@@ -50,7 +62,9 @@ function factorize() {
         ans[i] = parseInt(ans[i], 10);
     }
 
-    console.log(ans);
+    if (ans.length == 1) {
+        ans = ans[0];
+    }
 
 
     //check if the answer is just whitespace
@@ -60,11 +74,6 @@ function factorize() {
         document.getElementById("correct").style.backgroundColor = "#ccc";
         document.getElementById("correct").style.border = "solid black";
         document.getElementById("ans").value = "";
-
-
-
-
-
         document.getElementById("correct").style.backgroundColor = "#888";
 
         setTimeout(function () {
@@ -80,9 +89,9 @@ function factorize() {
         document.getElementById("correct").style.backgroundColor = "#cfc";
         document.getElementById("correct").style.border = "solid green";
         document.getElementById("correct").innerText = `Your last answer of ${ans[0]}/${ans[1]} was Correct ☺️`;
-        correct += 1;
-
         document.getElementById("table_correct").innerHTML = "<td>" + `${ans[0]}/${ans[1]}` + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_correct").innerHTML;
+        tries = 3;
+        update_stats(document.getElementById('username').innerText, 'fraction', 1);
     }
 
     //incorrect
@@ -90,11 +99,11 @@ function factorize() {
         document.getElementById("correct").style.backgroundColor = "#fcc";
         document.getElementById("correct").style.border = "solid red";
         document.getElementById("correct").innerText = `Your last answer of ${ans[0]}/${ans[1]} was Incorrect ☹`;
-        incorrect += 1;
         document.getElementById("table_incorrect").innerHTML = "<td>" + `${ans[0]}/${ans[1]}` + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_incorrect").innerHTML;
 
         document.getElementById("ans").value = "";
         tries -= 1;
+        update_stats(document.getElementById('username').innerText, 'fraction', 0);
         if (tries > 0) {
 
             return;
@@ -106,16 +115,14 @@ function factorize() {
 
 
 
-    setCookie("incorrect", incorrect);
-    setCookie("correct", correct);
-
-
     document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString()
 
     document.getElementById("ans").value = "";
 
-    num_1 = [parseInt((Math.random() * 20) + 1, 10), parseInt((Math.random() * 20) + 1, 10)];
-    num_2 = [parseInt((Math.random() * 20) + 1, 10), parseInt((Math.random() * 20) + 1, 10)];
+    
+
+    num_1 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
+    num_2 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
     //create two random fractions
 
 

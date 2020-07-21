@@ -1,7 +1,7 @@
 "use strict";
 
-const fs = require('fs');
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
+document.getElementById("correct").style.backgroundColor = "#ccc";
+document.getElementById("correct").style.border = "solid black";
 
 function list_is_whitespace(l) {
     for (var i = 0; i < l.length; i++) {
@@ -75,10 +75,15 @@ function lcm(x, y) {
     return (!x || !y) ? 0 : Math.abs((x * y) / gcd(x, y));
 }
 
-/*
-function update_stats(file, user, correct) {
-    var file = fs.readFileSync(file);
-    var contents = file.split('\n');
-    for (var i = 0; i < contents.length)
+
+function update_stats(username, type, correct){
+    var url = `/scores?username=${username}&type=${type}&correct=${correct}`;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/html',
+        },
+        body: ''
+    });
+
 }
-*/
