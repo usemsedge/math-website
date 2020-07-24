@@ -19,10 +19,8 @@ function add_fractions(x, y) {
     var least = lcm(x[1], y[1]);
     var mul_x = least / x[1];
     var mul_y = least / y[1];
-    console.log([x, y, mul_x, mul_y]);
     var top = x[0] * mul_x + y[0] * mul_y;
     var bottom = least;
-    console.log([top, bottom]);
     return [top, bottom];
 }
 
@@ -89,7 +87,7 @@ function factorize() {
         document.getElementById("correct").style.backgroundColor = "#cfc";
         document.getElementById("correct").style.border = "solid green";
         document.getElementById("correct").innerText = `Your last answer of ${ans[0]}/${ans[1]} was Correct ☺️`;
-        document.getElementById("table_correct").innerHTML = "<td>" + `${ans[0]}/${ans[1]}` + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_correct").innerHTML;
+        document.getElementById("table_correct").innerHTML = `<td>${ans[0]}/${ans[1]}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_correct").innerHTML}`;
         tries = 3;
         update_stats(document.getElementById('username').innerText, 'fraction', 1);
     }
@@ -99,7 +97,7 @@ function factorize() {
         document.getElementById("correct").style.backgroundColor = "#fcc";
         document.getElementById("correct").style.border = "solid red";
         document.getElementById("correct").innerText = `Your last answer of ${ans[0]}/${ans[1]} was Incorrect ☹`;
-        document.getElementById("table_incorrect").innerHTML = "<td>" + `${ans[0]}/${ans[1]}` + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_incorrect").innerHTML;
+        document.getElementById("table_incorrect").innerHTML = `<td>${ans[0]}/${ans[1]}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_incorrect").innerHTML}`;
 
         document.getElementById("ans").value = "";
         tries -= 1;
@@ -112,15 +110,8 @@ function factorize() {
             tries = 3;
         }
     }
-
-
-
-    document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString()
-
+    document.getElementById("counter").innerHTML = `Correct answers: ${correct.toString()}<br>Incorrect answers: " + incorrect.toString()`;
     document.getElementById("ans").value = "";
-
-    
-
     num_1 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
     num_2 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
     //create two random fractions

@@ -15,8 +15,6 @@ function root() {
 
     var ans = document.getElementById("ans").value;
     ans = parseInt(ans);
-    console.log(correct_ans);
-    console.log(ans);
 
 
     //check if the answer is just whitespace
@@ -40,23 +38,18 @@ function root() {
     if (correct_ans == ans) {
         document.getElementById("correct").style.backgroundColor = "#cfc";
         document.getElementById("correct").style.border = "solid green";
-        document.getElementById("correct").innerText = "Your last answer of '" + ans + "' was Correct ☺️";
-
-        document.getElementById("table_correct").innerHTML = "<td>" + ans.toString() + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_correct").innerHTML;
+        document.getElementById("correct").innerText = `Your last answer of '${ans}' was Correct ☺️`;
+        document.getElementById("table_correct").innerHTML = `<td>${ans}}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_correct").innerHTML}`;
         tries = 3;
-
         update_stats(document.getElementById('username').innerText, 'square', 1);
     }
-
     //incorrect
     else {
         document.getElementById("correct").style.backgroundColor = "#fcc";
         document.getElementById("correct").style.border = "solid red";
-        document.getElementById("correct").innerText = "Your last answer of '" + ans + "' was Incorrect ☹";
-        document.getElementById("table_incorrect").innerHTML = "<td>" + ans.toString() + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_incorrect").innerHTML;
-
+        document.getElementById("correct").innerText = `Your last answer of '${ans}' was Inorrect ☹`;
+        document.getElementById("table_incorrect").innerHTML = `<td>${ans}}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_incorrect").innerHTML}`;
         document.getElementById("ans").value = "";
-
         update_stats(document.getElementById('username').innerText, 'square', 0);
         tries -= 1;
         if (tries > 0) {
@@ -72,10 +65,7 @@ function root() {
     //document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString()
 
     document.getElementById("ans").value = "";
-
     num_1 = parseInt(Math.random() * 100, 10);
-
-
-    document.getElementById("question").innerText = "What is the square root of " + (num_1 * num_1).toString();
+    document.getElementById("question").innerText = `What is the square root of ${(num_1 * num_1).toString()}`;
 
 }

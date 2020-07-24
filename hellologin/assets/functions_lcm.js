@@ -44,8 +44,8 @@ function find_lcm() {
     if (parseInt(ans) === correct_ans) {
         document.getElementById("correct").style.backgroundColor = "#cfc";
         document.getElementById("correct").style.border = "solid green";
-        document.getElementById("correct").innerText = "Your last answer of '" + ans + "' was Correct";
-        document.getElementById("table_correct").innerHTML = "<td>" + ans.toString() + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_correct").innerHTML;
+        document.getElementById("correct").innerText = `Your last answer of '${ans}' was Correct`;
+        document.getElementById("table_correct").innerHTML = `<td>${ans.toString()}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_correct").innerHTML}`;
         tries = 3;
         update_stats(document.getElementById('username').innerText, 'lcm', 1);
     }
@@ -54,8 +54,8 @@ function find_lcm() {
     else {
         document.getElementById("correct").style.backgroundColor = "#fcc";
         document.getElementById("correct").style.border = "solid red";
-        document.getElementById("correct").innerText = "Your last answer of '" + ans + "' was Incorrect";
-        document.getElementById("table_incorrect").innerHTML = "<td>" + ans.toString() + "  " + document.getElementById("question").innerText + "</td>" + document.getElementById("table_incorrect").innerHTML;
+        document.getElementById("correct").innerText = `Your last answer of '${ans}' was Incorrect`;
+        document.getElementById("table_incorrect").innerHTML = `<td>${ans.toString()}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_incorrect").innerHTML}`;
 
         document.getElementById("ans").value = "";
 
@@ -74,7 +74,7 @@ function find_lcm() {
 
 
 
-    document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString()
+    document.getElementById("counter").innerHTML = `Correct answers: ${correct.toString()}<br>Incorrect answers: ${incorrect.toString()}`;
 
     document.getElementById("ans").value = "";
 
@@ -82,7 +82,7 @@ function find_lcm() {
     num_2 = parseInt((Math.random() * 100) + 1, 10);
 
 
-    document.getElementById("question").innerText = "What is the least common multiple of " + num_1.toString() + " and " + num_2.toString()
+    document.getElementById("question").innerText = `What is the least common multiple of ${num_1.toString()} and ${num_2.toString()}`;
 
 
 }

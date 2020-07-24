@@ -1,5 +1,7 @@
 "use strict";
 
+const VALID_MODES = ['fractions', 'square', 'lcm', 'pf'];
+
 document.getElementById("correct").style.backgroundColor = "#ccc";
 document.getElementById("correct").style.border = "solid black";
 
@@ -16,12 +18,6 @@ function arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
     if (a.length !== b.length) return false;
-
-    // If you don't care about the order of the elements inside
-    // the array, you should sort both arrays here.
-    // Please note that calling sort on an array will modify that array.
-    // you might want to clone your array first.
-
     for (var i = 0; i < a.length; ++i) {
         if (a[i] !== b[i]) return false;
     }
@@ -77,13 +73,17 @@ function lcm(x, y) {
 
 
 function update_stats(username, type, correct){
-    var url = `/scores?username=${username}&type=${type}&correct=${correct}`;
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/html',
-        },
-        body: ''
-    });
-
+    if (type in VALID_MODES) {
+        var url = `/scores?username=${username}&type=${type}&correct=${correct}`;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/html',
+            },
+            body: ''
+        });
+    }
+    else {
+        console.error(`Error: ${type} is not a valid mode`);
+    }
 }
