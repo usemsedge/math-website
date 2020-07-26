@@ -19,10 +19,6 @@ function find_lcm() {
 
     var ans = document.getElementById("ans").value;
 
-
-
-
-
     //check if the answer is just whitespace
     if (ans === "") {
         // no answer givennnn

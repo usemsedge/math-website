@@ -1,0 +1,47 @@
+<html>
+<a href="/math">Home</a>
+
+<p id="username"></p>
+
+<div style="background-color: #fff ; padding: 10px; border: solid black; text-align: center; font-size: 20px;"
+  id="question">
+  What is 24 * 26
+</div>
+
+<div style="background-color: #ccf ; padding: 10px; border: 1px solid blue; text-align: center" id="some_div">
+  <form onsubmit="return false;" method="post" name="myForm">
+    <input type="text" id="ans" name="ans"><br><br>
+    <input type="submit" name="submit" onclick="factorize()">
+  </form>
+</div>
+
+
+
+<div style="background-color: #fcc ; padding: 10px; border: 1px solid red; text-align: center; font-size: 20px;"
+  id="correct">
+  No answer given
+</div>
+
+<div id="img">
+
+</div>
+
+<div style="background-color: #fff; padding: 10px; border: 1px solid black; text-align: center; font-size: 20px;"
+  id="counter">
+  Correct answers: 0<br>Incorrect answers: 0
+</div>
+
+
+<div>
+  <table style="float: left; padding: 20px" id="table_correct">
+    <td style="font-size: 20px">CORRECT ANSWERS</td>
+  </table>
+  <table style="float: left; padding: 20px" id="table_incorrect">
+    <td style="font-size: 20px">INCORRECT ANSWERS</td>
+  </table>
+</div>
+
+<script src="common_functions.js"></script>
+<script src="functions_5square.js"></script>
+
+</html>

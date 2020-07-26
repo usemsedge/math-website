@@ -5,18 +5,19 @@ function get_full_time() {
     return `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}, ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 }
 
-var express = require('express');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var path = require('path');
-var url = require('url');
-var nodemailer = require('nodemailer');
+const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const path = require('path');
+const url = require('url');
+const nodemailer = require('nodemailer');
+const fs = require("fs");
 
-var fs = require("fs");
 const { response } = require('express');
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
-const email_regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
-
+const email_regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+const ADMIN_PASSWORD = 'admin';
+const ADMIN_USERNAME = 'admin';
 
 function xread(file) {
     return fs.readFileSync(file).toString();
@@ -42,7 +43,7 @@ app.get('/', function(request, response) {
 
 
 app.get('/register', function(request, response) {
-    response.sendFile(path.join(`${__dirname}'/register.html`));
+    response.sendFile(path.join(`${__dirname}/register.html`));
 });
 
 
@@ -50,12 +51,12 @@ app.get('/register', function(request, response) {
 // user1:pw1\nuser2:pw2\n
 
 app.post('/reg', function(request, response) {
-    var username = request.body.username;
+    var username = request.body.username.toLowerCase();
     var password = request.body.password;
     var password2 = request.body.password2;
     var email = request.body.email;
 
-    console.log(`${username} registered with a password of ${password} and email ${email} at ${get_full_time()}`);
+    console.log(` >>> ${username} registered with a password of ${password} and email ${email} at ${get_full_time()} <<< `);
     
     var contents = JSON.parse(fs.readFileSync("list.json"));
 
@@ -71,7 +72,9 @@ app.post('/reg', function(request, response) {
         }
 
         
-
+        if (username === ADMIN_USERNAME) {
+            response.send("Username is Taken Already");
+        }
         if (contents[username]) {
             //username has been taken
             response.send("Username is Taken Already");    
@@ -92,7 +95,7 @@ app.post('/reg', function(request, response) {
 
         //set the stats
         var k = JSON.parse(fs.readFileSync('stats.json'));
-        k.push([username, 0, 0, 0, 0, 0, 0, 0, 0]);
+        k.push([username, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         fs.writeFileSync('stats.json', JSON.stringify(k));
         response.redirect('/');
         return;
@@ -103,21 +106,24 @@ app.post('/reg', function(request, response) {
 });
 
 app.post('/auth', function(request, response) {
-    var username = request.body.username;
+    var username = request.body.username.toLowerCase();
     var password = request.body.password;
     if (username && password) {
+        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            request.session.loggedin = true;
+            request.session.username = ADMIN_USERNAME;
+                //admins can see the email thig
+            response.redirect('/email');
+            console.log(` >>> Admin logged in at ${get_full_time()} <<< `);
+            return;
+            
+        }
         var contents = JSON.parse(xread("list.json"));
         try {
             if (contents[username][0] == password) {
                 request.session.loggedin = true;
                 request.session.username = username;
-                if (request.session.username == 'admin') {
-                    //admins can see the email thig
-                    response.redirect('/email');
-                    console.log(`Admin logged in at ${get_full_time()}`);
-                    return;
-                }
-                console.log(`User ${request.session.username} logged in at ${get_full_time()}`);
+                console.log(` >>> User ${request.session.username} logged in at ${get_full_time()} <<< `);
                 response.redirect('/home');
                 return;
                 
@@ -131,10 +137,12 @@ app.post('/auth', function(request, response) {
 
         response.send('Incorrect Username and/or Password!');
         response.end();
+        return;
 
     } else {
         response.send('Please enter Username and/or Password!');
         response.end();
+        return;
     }
 });
 
@@ -211,18 +219,24 @@ app.get('/math', function(request, response) {
     var pf_data = [];
     var lcm_data = [];
     var square_data = [];
+    var square5_data = [];
+    var square5reverse_data = [];
 
     for (var i = 0; i < stats.length; i++) {
         fraction_data.push([stats[i][0], stats[i][1], stats[i][2]]);
         pf_data.push([stats[i][0], stats[i][3], stats[i][4]]);
         lcm_data.push([stats[i][0], stats[i][5], stats[i][6]]);
         square_data.push([[stats[i][0]], stats[i][7], stats[i][8]]);
+        square5_data.push([[stats[i][0]], stats[i][9], stats[i][10]]);
+        square5reverse_data.push([[stats[i][0]], stats[i][11], stats[i][12]]);
     }
 
     fraction_data.sort((a, b) => a[1] - b[1]);
     pf_data.sort((a, b) => a[1] - b[1]);
     lcm_data.sort((a, b) => a[1] - b[1]);
     square_data.sort((a, b) => a[1] - b[1]);
+    square5_data.sort((a, b) => a[1] - b[1]);
+    square5reverse_data.sort((a, b) => a[1] - b[1]);
 
 
     
@@ -230,26 +244,37 @@ app.get('/math', function(request, response) {
     var pf_text = "";
     var lcm_text = "";
     var square_text = "";
+    var square5_text = "";
+    var square5reverse_text = "";
 
     var fraction_text2 = "";
     var pf_text2 = "";
     var lcm_text2 = "";
     var square_text2 = "";
+    var square5_text2 = "";
+    var square5reverse_text2 = "";
     
     for (var i = 0; i < stats.length; i++) {
         var f = fraction_data[i];
         var p = pf_data[i];
         var l = lcm_data[i];
         var s = square_data[i];
+        var s5 = square5_data[i];
+        var s5r = square5reverse_data[i];
+
         fraction_text = `<tbody><tr><td>${f[0]}</td></tr></tbody>${fraction_text}`;
         pf_text = `<tbody><tr><td>${p[0]}</tr></td></tbody>${pf_text}`;
         lcm_text = `<tbody><tr><td>${l[0]}</tr></td></tbody>${lcm_text}`;
         square_text = `<tbody><tr><td>${s[0]}</tr></td></tbody>${square_text}`;
+        square5_text = `<tbody><tr><td>${s5[0]}</tr></td></tbody>${square5_text}`;
+        square5reverse_text = `<tbody><tr><td>${s5r[0]}</tr></td></tbody>${square5reverse_text}`;
 
         fraction_text2 = `<tbody><tr><td> ${f[1]}</td></tr></tbody>${fraction_text2}`;
         pf_text2 = `<tbody><tr><td> ${p[1]}</tr></td></tbody>${pf_text2}`;
         lcm_text2 = `<tbody><tr><td> ${l[1]}</tr></td></tbody>${lcm_text2}`;
         square_text2 = `<tbody><tr><td>${s[1]}</tr></td></tbody>${square_text2}`;
+        square5_text2 = `<tbody><tr><td>${s5[1]}</tr></td></tbody>${square5_text2}`;
+        square5reverse_text2 = `<tbody><tr><td>${s5r[1]}</tr></td></tbody>${square5reverse_text2}`;
         
         
     }
@@ -258,11 +283,15 @@ app.get('/math', function(request, response) {
     htmlstuff = htmlstuff.replace('<tr>lcm</tr>', lcm_text);
     htmlstuff = htmlstuff.replace('<tr>pf</tr>', pf_text);
     htmlstuff = htmlstuff.replace('<tr>square</tr>', square_text);
+    htmlstuff = htmlstuff.replace('<tr>square5</tr>', square5_text);
+    htmlstuff = htmlstuff.replace('<tr>square5erverse</tr>', square5reverse_text);
 
     htmlstuff = htmlstuff.replace('<tr>fractions2</tr>', fraction_text2);
     htmlstuff = htmlstuff.replace('<tr>lcm2</tr>', lcm_text2);
     htmlstuff = htmlstuff.replace('<tr>pf2</tr>', pf_text2);
     htmlstuff = htmlstuff.replace('<tr>square2</tr>', square_text2);
+    htmlstuff = htmlstuff.replace('<tr>square52</tr>', square5_text2);
+    htmlstuff = htmlstuff.replace('<tr>square5reverse2</tr>', square5reverse_text2);
 
     response.send(htmlstuff);
 
@@ -319,6 +348,29 @@ app.get('/mathsquare', function(request, response) {
     }
 })
 
+app.get('/math5square', function(request, response) {
+    if (1 || request.session.loggedin) {
+        var x = fs.readFileSync('5square.html').toString();
+        x = x.replace(`id="username">`, `id="username">${request.session.username}`);
+        
+        response.send(x);
+    }
+    else {
+        response.sendFile(`${__dirname}/please_log_in.html`);
+    }
+})
+
+app.get('/math5squarereverse', function(request, response) {
+    if (1 || request.session.loggedin) {
+        var x = fs.readFileSync('5squarereverse.html').toString();
+        x = x.replace(`id="username">`, `id="username">${request.session.username}`);
+        
+        response.send(x);
+    }
+    else {
+        response.sendFile(`${__dirname}/please_log_in.html`);
+    }
+})
 
 
 
@@ -337,7 +389,7 @@ app.post('/scores', async (request, response) => {
         var obj = JSON.parse(fs.readFileSync('stats.json'));
         for (var i = 0; i < obj.length; i++) {
             if (obj[i][0] === username) {
-                if (type === 'fraction') {
+                if (type === 'fractions') {
                     if (correct) {
                         obj[i][1]++;
                     }
@@ -370,11 +422,32 @@ app.post('/scores', async (request, response) => {
 
                     }
                 }
+
+                else if (type === 'square5') {
+                    if (correct) {
+                        obj[i][9]++;
+                    }
+                    else {
+                        obj[i][10]++;
+
+                    }
+                }
+
+                else if (type === 'square5reverse') {
+                    if (correct) {
+                        obj[i][11]++;
+                    }
+                    else {
+                        obj[i][12]++;
+
+                    }
+                }
+
 				fs.writeFileSync('stats.json', JSON.stringify(obj));
                 break;
             }
         }
-
+        console.log(`Username ${username} answered a ${type} question that was correct? ${correct}`);
 
         if (obj) {
             response.status(200).send('sent successfully');

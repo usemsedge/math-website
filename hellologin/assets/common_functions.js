@@ -1,6 +1,7 @@
 "use strict";
 
 const VALID_MODES = ['fractions', 'square', 'lcm', 'pf'];
+const TESTING_MODES = ['5square', '5squarereverse'];
 
 document.getElementById("correct").style.backgroundColor = "#ccc";
 document.getElementById("correct").style.border = "solid black";
@@ -73,17 +74,26 @@ function lcm(x, y) {
 
 
 function update_stats(username, type, correct){
-    if (type in VALID_MODES) {
-        var url = `/scores?username=${username}&type=${type}&correct=${correct}`;
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/html',
-            },
-            body: ''
-        });
+    try {
+        if (VALID_MODES.indexOf(type) > -1) {
+            var url = `/scores?username=${username}&type=${type}&correct=${correct}`;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/html',
+                },
+                body: ''
+            });
+            return;
+        }
+        else if (TESTING_MODES.indexOf(type) > -1) {
+            return;
+        }
+        else {
+            console.error(`Error: ${type} is not a valid mode`);
+        }
     }
-    else {
+    catch (error) {
         console.error(`Error: ${type} is not a valid mode`);
     }
 }

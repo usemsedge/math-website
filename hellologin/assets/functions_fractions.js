@@ -89,7 +89,7 @@ function factorize() {
         document.getElementById("correct").innerText = `Your last answer of ${ans[0]}/${ans[1]} was Correct ☺️`;
         document.getElementById("table_correct").innerHTML = `<td>${ans[0]}/${ans[1]}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_correct").innerHTML}`;
         tries = 3;
-        update_stats(document.getElementById('username').innerText, 'fraction', 1);
+        update_stats(document.getElementById('username').innerText, 'fractions', 1);
     }
 
     //incorrect
@@ -101,7 +101,7 @@ function factorize() {
 
         document.getElementById("ans").value = "";
         tries -= 1;
-        update_stats(document.getElementById('username').innerText, 'fraction', 0);
+        update_stats(document.getElementById('username').innerText, 'fractions', 0);
         if (tries > 0) {
 
             return;
