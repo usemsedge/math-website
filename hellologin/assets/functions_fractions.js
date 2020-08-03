@@ -52,9 +52,8 @@ function factorize() {
 
 
     var ans = document.getElementById("ans").value;
-    ans = ans.split("/")
+    ans = ans.split("/");
     removeItem(ans, "");
-
 
     for (var i = 0; i < ans.length; i++) {
         ans[i] = parseInt(ans[i], 10);
@@ -110,7 +109,7 @@ function factorize() {
             tries = 3;
         }
     }
-    document.getElementById("counter").innerHTML = `Correct answers: ${correct.toString()}<br>Incorrect answers: " + incorrect.toString()`;
+    get_score(document.getElementById('username').innerText, 'fractions');
     document.getElementById("ans").value = "";
     num_1 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
     num_2 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];

@@ -32,10 +32,9 @@ function root() {
 
         return;
     }
-
-
+    
     //correct
-    if (correct_ans == ans) {
+    if (correct_ans === ans) {
         document.getElementById("correct").style.backgroundColor = "#cfc";
         document.getElementById("correct").style.border = "solid green";
         document.getElementById("correct").innerText = `Your last answer of '${ans}' was Correct ☺️`;
@@ -62,8 +61,7 @@ function root() {
     }
 
 
-    //document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString()
-
+    get_score(document.getElementById('username').innerText, 'square');
     document.getElementById("ans").value = "";
     num_1 = parseInt(Math.random() * 100, 10);
     document.getElementById("question").innerText = `What is the square root of ${(num_1 * num_1).toString()}`;

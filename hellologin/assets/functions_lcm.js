@@ -70,8 +70,7 @@ function find_lcm() {
 
 
 
-    document.getElementById("counter").innerHTML = `Correct answers: ${correct.toString()}<br>Incorrect answers: ${incorrect.toString()}`;
-
+    get_score(document.getElementById('username').innerText, 'lcm');
     document.getElementById("ans").value = "";
 
     num_1 = parseInt((Math.random() * 100) + 1, 10);

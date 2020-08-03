@@ -1,6 +1,6 @@
 "use strict";
 
-var today = new Date();
+const today = new Date();
 function get_full_time() {
     return `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}, ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 }
@@ -15,13 +15,10 @@ const fs = require("fs");
 
 const { response } = require('express');
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
-const email_regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+const email_regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
+//const user_regex = 
 const ADMIN_PASSWORD = 'admin';
 const ADMIN_USERNAME = 'admin';
-
-function xread(file) {
-    return fs.readFileSync(file).toString();
-}
 
 var app = express();
 
@@ -66,12 +63,17 @@ app.post('/reg', function(request, response) {
             response.send("Invalid Email");
             return;
         }
+
+        /*
+        if (!username.match(user_regex)) {
+            response.send("Invalid Username");
+            return;
+        }*/
+
         if (password !== password2) {
             response.send("Passwords do not match");
             return;
-        }
-
-        
+        }        
         if (username === ADMIN_USERNAME) {
             response.send("Username is Taken Already");
         }
@@ -95,7 +97,9 @@ app.post('/reg', function(request, response) {
 
         //set the stats
         var k = JSON.parse(fs.readFileSync('stats.json'));
-        k.push([username, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        k[username] = {"fractions":0, "lcm":0, "pf":0, "square":0, "square5":0, "square5reverse":0,
+                       "fractions_in":0, "lcm_in":0, "pf_in":0, "square_in":0, 
+                       "square5_in":0, "square5reverse_in":0};
         fs.writeFileSync('stats.json', JSON.stringify(k));
         response.redirect('/');
         return;
@@ -118,13 +122,13 @@ app.post('/auth', function(request, response) {
             return;
             
         }
-        var contents = JSON.parse(xread("list.json"));
+        var contents = JSON.parse(fs.readFileSync("list.json"));
         try {
             if (contents[username][0] == password) {
                 request.session.loggedin = true;
                 request.session.username = username;
                 console.log(` >>> User ${request.session.username} logged in at ${get_full_time()} <<< `);
-                response.redirect('/home');
+                response.redirect('/dashboard');
                 return;
                 
             }
@@ -147,15 +151,6 @@ app.post('/auth', function(request, response) {
 });
 
 
-app.get('/home', function(request, response) {
-    if (request.session.loggedin) {
-        response.redirect('/math');
-    } else {
-        response.sendFile(`${__dirname}/please_log_in.html`);
-    }
-    response.end();
-
-});
 
 function send_mail_to_all(contents, email, password, subject, text) {
     for (var key in contents) {
@@ -212,90 +207,13 @@ app.get('/email', function(request, response) {
     }
 });
 
+app.get('/dashboard', function(request, response) {
+    response.sendFile(`${__dirname}/dashboard.html`);
+});
 
-app.get('/math', function(request, response) {
+app.get('/dashboard_data', function(request, response) {
     var stats = JSON.parse(fs.readFileSync('stats.json'));
-    var fraction_data = [];
-    var pf_data = [];
-    var lcm_data = [];
-    var square_data = [];
-    var square5_data = [];
-    var square5reverse_data = [];
-
-    for (var i = 0; i < stats.length; i++) {
-        fraction_data.push([stats[i][0], stats[i][1], stats[i][2]]);
-        pf_data.push([stats[i][0], stats[i][3], stats[i][4]]);
-        lcm_data.push([stats[i][0], stats[i][5], stats[i][6]]);
-        square_data.push([[stats[i][0]], stats[i][7], stats[i][8]]);
-        square5_data.push([[stats[i][0]], stats[i][9], stats[i][10]]);
-        square5reverse_data.push([[stats[i][0]], stats[i][11], stats[i][12]]);
-    }
-
-    fraction_data.sort((a, b) => a[1] - b[1]);
-    pf_data.sort((a, b) => a[1] - b[1]);
-    lcm_data.sort((a, b) => a[1] - b[1]);
-    square_data.sort((a, b) => a[1] - b[1]);
-    square5_data.sort((a, b) => a[1] - b[1]);
-    square5reverse_data.sort((a, b) => a[1] - b[1]);
-
-
-    
-    var fraction_text = "";
-    var pf_text = "";
-    var lcm_text = "";
-    var square_text = "";
-    var square5_text = "";
-    var square5reverse_text = "";
-
-    var fraction_text2 = "";
-    var pf_text2 = "";
-    var lcm_text2 = "";
-    var square_text2 = "";
-    var square5_text2 = "";
-    var square5reverse_text2 = "";
-    
-    for (var i = 0; i < stats.length; i++) {
-        var f = fraction_data[i];
-        var p = pf_data[i];
-        var l = lcm_data[i];
-        var s = square_data[i];
-        var s5 = square5_data[i];
-        var s5r = square5reverse_data[i];
-
-        fraction_text = `<tbody><tr><td>${f[0]}</td></tr></tbody>${fraction_text}`;
-        pf_text = `<tbody><tr><td>${p[0]}</tr></td></tbody>${pf_text}`;
-        lcm_text = `<tbody><tr><td>${l[0]}</tr></td></tbody>${lcm_text}`;
-        square_text = `<tbody><tr><td>${s[0]}</tr></td></tbody>${square_text}`;
-        square5_text = `<tbody><tr><td>${s5[0]}</tr></td></tbody>${square5_text}`;
-        square5reverse_text = `<tbody><tr><td>${s5r[0]}</tr></td></tbody>${square5reverse_text}`;
-
-        fraction_text2 = `<tbody><tr><td> ${f[1]}</td></tr></tbody>${fraction_text2}`;
-        pf_text2 = `<tbody><tr><td> ${p[1]}</tr></td></tbody>${pf_text2}`;
-        lcm_text2 = `<tbody><tr><td> ${l[1]}</tr></td></tbody>${lcm_text2}`;
-        square_text2 = `<tbody><tr><td>${s[1]}</tr></td></tbody>${square_text2}`;
-        square5_text2 = `<tbody><tr><td>${s5[1]}</tr></td></tbody>${square5_text2}`;
-        square5reverse_text2 = `<tbody><tr><td>${s5r[1]}</tr></td></tbody>${square5reverse_text2}`;
-        
-        
-    }
-    var htmlstuff = fs.readFileSync('index.html').toString();
-    htmlstuff = htmlstuff.replace('<tr>fractions</tr>', fraction_text);
-    htmlstuff = htmlstuff.replace('<tr>lcm</tr>', lcm_text);
-    htmlstuff = htmlstuff.replace('<tr>pf</tr>', pf_text);
-    htmlstuff = htmlstuff.replace('<tr>square</tr>', square_text);
-    htmlstuff = htmlstuff.replace('<tr>square5</tr>', square5_text);
-    htmlstuff = htmlstuff.replace('<tr>square5erverse</tr>', square5reverse_text);
-
-    htmlstuff = htmlstuff.replace('<tr>fractions2</tr>', fraction_text2);
-    htmlstuff = htmlstuff.replace('<tr>lcm2</tr>', lcm_text2);
-    htmlstuff = htmlstuff.replace('<tr>pf2</tr>', pf_text2);
-    htmlstuff = htmlstuff.replace('<tr>square2</tr>', square_text2);
-    htmlstuff = htmlstuff.replace('<tr>square52</tr>', square5_text2);
-    htmlstuff = htmlstuff.replace('<tr>square5reverse2</tr>', square5reverse_text2);
-
-    response.send(htmlstuff);
-
-
+    response.send(stats);
 });
 
 
@@ -312,7 +230,7 @@ app.get('/mathlcm', function(request, response) {
 });
 
 
-app.get('/mathfactor', function(request, response) {
+app.get('/mathpf', function(request, response) {
     if (request.session.loggedin) {
         var x = fs.readFileSync('prime_factorization.html').toString();
         x = x.replace(`id="username">`, `id="username">${request.session.username}`);
@@ -350,7 +268,7 @@ app.get('/mathsquare', function(request, response) {
 
 app.get('/math5square', function(request, response) {
     if (1 || request.session.loggedin) {
-        var x = fs.readFileSync('5square.html').toString();
+        var x = fs.readFileSync('square5.html').toString();
         x = x.replace(`id="username">`, `id="username">${request.session.username}`);
         
         response.send(x);
@@ -362,7 +280,7 @@ app.get('/math5square', function(request, response) {
 
 app.get('/math5squarereverse', function(request, response) {
     if (1 || request.session.loggedin) {
-        var x = fs.readFileSync('5squarereverse.html').toString();
+        var x = fs.readFileSync('square5reverse.html').toString();
         x = x.replace(`id="username">`, `id="username">${request.session.username}`);
         
         response.send(x);
@@ -374,83 +292,56 @@ app.get('/math5squarereverse', function(request, response) {
 
 
 
+app.post('/get_score', async(request, response) => {
+    try {
+        var query = url.parse(request.url, true).query;
 
+        var username = query['username'];
+        var type = query['type'];
+        var stats = JSON.parse(fs.readFileSync('stats.json'));
+        var score = stats[username][type];
+        var score_in = stats[username][`${type}_in`];
+
+        if (score) {
+            response.json({correct: score, incorrect: score_in});
+            response.status(200).send();
+        }
+        else {
+            response.write('failed to send');
+        }
+    }
+    catch (error) {
+        response.write('failed to send');
+    }
+});
 
 // send request via index.html
 app.post('/scores', async (request, response) => {
+    let query;
+    let username;
+    let type;
+    let correct;
     try {
+        query = url.parse(request.url, true).query;
+        username = query['username'];
+        type = query['type'];
+        correct = query['correct'] == 1;
 
-        let query = url.parse(request.url, true).query;
-
-        const username = query['username'];
-        const type = query['type'];
-        const correct = query['correct'] == 1;
-
-        var obj = JSON.parse(fs.readFileSync('stats.json'));
-        for (var i = 0; i < obj.length; i++) {
-            if (obj[i][0] === username) {
-                if (type === 'fractions') {
-                    if (correct) {
-                        obj[i][1]++;
-                    }
-                    else {
-                        obj[i][2]++;
-                    }
-                }
-                else if (type === 'pf') {
-                    if (correct) {
-                        obj[i][3]++;
-                    }
-                    else {
-                        obj[i][4]++;
-                    }
-                }
-                else if (type === 'lcm') {
-                    if (correct) {
-                        obj[i][5]++;
-                    }
-                    else {
-                        obj[i][6]++;
-                    }
-                }
-                else if (type === 'square') {
-                    if (correct) {
-                        obj[i][7]++;
-                    }
-                    else {
-                        obj[i][8]++;
-
-                    }
-                }
-
-                else if (type === 'square5') {
-                    if (correct) {
-                        obj[i][9]++;
-                    }
-                    else {
-                        obj[i][10]++;
-
-                    }
-                }
-
-                else if (type === 'square5reverse') {
-                    if (correct) {
-                        obj[i][11]++;
-                    }
-                    else {
-                        obj[i][12]++;
-
-                    }
-                }
-
-				fs.writeFileSync('stats.json', JSON.stringify(obj));
-                break;
-            }
+        var stats = JSON.parse(fs.readFileSync('stats.json'));
+        if (correct) {
+            stats[username][type]++;
         }
+        else {
+            stats[username][`${type}_in`]++;
+        }
+
+        fs.writeFileSync('stats.json', JSON.stringify(stats));       
+    
         console.log(`Username ${username} answered a ${type} question that was correct? ${correct}`);
 
-        if (obj) {
-            response.status(200).send('sent successfully');
+        if (stats) {
+            //response.json({score:10});
+            response.status(200).send();
         } 
         else {
             response.writeHead(InternalServerError);
@@ -458,7 +349,7 @@ app.post('/scores', async (request, response) => {
         }  
     }
     catch(err) {
-        console.error(`Scores failed to write for ${username, type, correct}`);
+        console.error(err);
         response.writeHead(InternalServerError);
         response.write('failed to send');
     }

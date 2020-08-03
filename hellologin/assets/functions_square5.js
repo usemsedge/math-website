@@ -39,7 +39,7 @@ function factorize() {
         document.getElementById("correct").innerText = `Your last answer of ${ans} was Correct ☺️`;
         document.getElementById("table_correct").innerHTML = `<td>${ans}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_correct").innerHTML}`;
         tries = 3;
-        update_stats(document.getElementById('username').innerText, '5square', 1);
+        update_stats(document.getElementById('username').innerText, 'square5', 1);
     }
 
     //incorrect
@@ -51,7 +51,7 @@ function factorize() {
 
         document.getElementById("ans").value = "";
         tries -= 1;
-        update_stats(document.getElementById('username').innerText, '5square', 0);
+        update_stats(document.getElementById('username').innerText, 'square5', 0);
         if (tries > 0) {
 
             return;
@@ -60,7 +60,8 @@ function factorize() {
             tries = 3;
         }
     }
-    document.getElementById("counter").innerHTML = `Correct answers: ${correct.toString()}<br>Incorrect answers: " + incorrect.toString()`;
+    get_score(document.getElementById('username').innerText, 'square5');
+
     document.getElementById("ans").value = "";
 
     var multiple_5 = parseInt((Math.random() * 10), 10) * 10 + 5;

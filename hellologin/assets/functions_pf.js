@@ -12,16 +12,11 @@ var tries = 3;
 
 //factorize
 function factorize() {
-
-
     var correct_ans = factors(num_1).sort();
-
-
     var ans = document.getElementById("ans").value;
     ans = ans.split(" ").sort();
+
     removeItem(ans, "");
-
-
     for (var i = 0; i < ans.length; i++) {
         ans[i] = parseInt(ans[i], 10);
     }
@@ -44,7 +39,6 @@ function factorize() {
 
         return;
     }
-
 
     //correct
     if (arraysEqual(correct_ans, ans)) {
@@ -78,8 +72,7 @@ function factorize() {
     }
 
 
-    document.getElementById("counter").innerHTML = `Correct answers: ${correct.toString()}<br>Incorrect answers: ${incorrect.toString()}`;
-
+    get_score(document.getElementById('username').innerText, 'pf');
     document.getElementById("ans").value = "";
 
     num_1 = parseInt((Math.random() * 100) + 1, 10);

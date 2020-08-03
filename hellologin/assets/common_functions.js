@@ -1,12 +1,13 @@
 "use strict";
 
-const VALID_MODES = ['fractions', 'square', 'lcm', 'pf'];
-const TESTING_MODES = ['5square', '5squarereverse'];
+const VALID_MODES = ['fractions', 'square', 'lcm', 'pf', 'square5', 'square5reverse'];
+const TESTING_MODES = [];
 
 document.getElementById("correct").style.backgroundColor = "#ccc";
 document.getElementById("correct").style.border = "solid black";
 
 function list_is_whitespace(l) {
+    //check if a list is whitespace
     for (var i = 0; i < l.length; i++) {
         if (l[i] != " ") {
             return false;
@@ -16,8 +17,9 @@ function list_is_whitespace(l) {
 }
 
 function arraysEqual(a, b) {
+    //check if two
     if (a === b) return true;
-    if (a == null || b == null) return false;
+    if (a === null || b === null) return false;
     if (a.length !== b.length) return false;
     for (var i = 0; i < a.length; ++i) {
         if (a[i] !== b[i]) return false;
@@ -72,6 +74,29 @@ function lcm(x, y) {
     return (!x || !y) ? 0 : Math.abs((x * y) / gcd(x, y));
 }
 
+function get_score(username, type) {
+    try {
+        if (VALID_MODES.indexOf(type) > -1) {
+            var url = `/get_score?username=${username}&type=${type}`;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/html',
+                },
+                body: ''
+            }).then(response => {
+                return response.json()
+            }).then(data => {
+                var correct = data['correct'];
+                var incorrect = data['incorrect'];
+                document.getElementById('counter').innerHTML = `Correct answers: ${correct}<br>Incorrect answers: ${incorrect}`;
+            })
+        }
+    }
+    catch (error) {
+        return;
+    }
+}
 
 function update_stats(username, type, correct){
     try {
@@ -83,8 +108,16 @@ function update_stats(username, type, correct){
                     'Content-Type': 'text/html',
                 },
                 body: ''
+            })
+            
+            /*
+            .then(response => {
+                return response.json()
+            }).then(data => {
+                console.log(data)
             });
             return;
+            */
         }
         else if (TESTING_MODES.indexOf(type) > -1) {
             return;
