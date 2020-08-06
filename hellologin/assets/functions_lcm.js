@@ -5,18 +5,8 @@ var num_2 = 1;
 
 var tries = 3;
 
-//document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString();
-
-
-
-
-//find lcm
-function find_lcm() {
-
-
+function send_scores() {
     var correct_ans = lcm(num_1, num_2)
-
-
     var ans = document.getElementById("ans").value;
 
     //check if the answer is just whitespace
@@ -34,7 +24,6 @@ function find_lcm() {
 
         return;
     }
-
 
     //correct
     if (parseInt(ans) === correct_ans) {
@@ -66,18 +55,11 @@ function find_lcm() {
         }
     }
 
-
-
-
-
     get_score(document.getElementById('username').innerText, 'lcm');
     document.getElementById("ans").value = "";
 
     num_1 = parseInt((Math.random() * 100) + 1, 10);
     num_2 = parseInt((Math.random() * 100) + 1, 10);
 
-
     document.getElementById("question").innerText = `What is the least common multiple of ${num_1.toString()} and ${num_2.toString()}`;
-
-
 }

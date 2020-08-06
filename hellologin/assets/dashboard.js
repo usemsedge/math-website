@@ -1,8 +1,9 @@
+"use strict";
 
 var url = '/dashboard_data';
 
 var stats = fetch(url, {
-    method: 'GET',
+    method: 'GET'
 }).then(response => {
     return response.json()
 }).then(data => {
@@ -43,4 +44,3 @@ function create_dashboard(data) {
         document.body.appendChild(table);
     }
 }
-

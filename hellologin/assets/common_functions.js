@@ -17,7 +17,7 @@ function list_is_whitespace(l) {
 }
 
 function arraysEqual(a, b) {
-    //check if two
+    //check if two arrays have the same elements
     if (a === b) return true;
     if (a === null || b === null) return false;
     if (a.length !== b.length) return false;
@@ -28,6 +28,7 @@ function arraysEqual(a, b) {
 }
 
 function removeItem(array, item) {
+    //removes an item from array
     for (var i = 0; i < array.length; i++) {
         if (array[i] == item) {
             array.splice(array.indexOf(item), 1);
@@ -49,6 +50,7 @@ function gcd(x, y) {
 }
 
 function factors(num) {
+    //finds the prime factors of a number
 
     var fac = [];
     while (num % 2 == 0) {
@@ -68,6 +70,7 @@ function factors(num) {
 }
 
 function lcm(x, y) {
+    // finds the least common multiple of two numbers
     if ((typeof x !== 'number') || (typeof y !== 'number')) {
         return false;
     }
@@ -75,6 +78,7 @@ function lcm(x, y) {
 }
 
 function get_score(username, type) {
+    //uses /get_score to return an integer amount of score
     try {
         if (VALID_MODES.indexOf(type) > -1) {
             var url = `/get_score?username=${username}&type=${type}`;
@@ -98,7 +102,9 @@ function get_score(username, type) {
     }
 }
 
+
 function update_stats(username, type, correct){
+    //sends a problem data to the server to handle and write in a file
     try {
         if (VALID_MODES.indexOf(type) > -1) {
             var url = `/scores?username=${username}&type=${type}&correct=${correct}`;

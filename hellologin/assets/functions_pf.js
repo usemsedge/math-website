@@ -1,17 +1,10 @@
 "use strict";
 
-
 var num_1 = 2;
 
 var tries = 3;
 
-//document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString();
-
-
-
-
-//factorize
-function factorize() {
+function send_scores() {
     var correct_ans = factors(num_1).sort();
     var ans = document.getElementById("ans").value;
     ans = ans.split(" ").sort();
@@ -20,9 +13,6 @@ function factorize() {
     for (var i = 0; i < ans.length; i++) {
         ans[i] = parseInt(ans[i], 10);
     }
-
-
-
 
     //check if the answer is just whitespace
     if (list_is_whitespace(ans) || ans === [""]) {
@@ -57,7 +47,6 @@ function factorize() {
         document.getElementById("correct").style.border = "solid red";
         document.getElementById("correct").innerText = `Your last answer of '${ans}' was Incorrect ☹`;
         document.getElementById("table_incorrect").innerHTML = `<td>${ans.toString()}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_incorrect").innerHTML}`;
-
         document.getElementById("ans").value = "";
 
         update_stats(document.getElementById('username').innerText, 'pf', 0);
@@ -71,13 +60,10 @@ function factorize() {
         }
     }
 
-
     get_score(document.getElementById('username').innerText, 'pf');
     document.getElementById("ans").value = "";
 
     num_1 = parseInt((Math.random() * 100) + 1, 10);
 
-
     document.getElementById("question").innerText = `What is the prime factorization of ${num_1.toString()}`;
-
 }

@@ -9,6 +9,14 @@ const my_password = "averysimplepassword1"; // the password to the email above
 
 contents = JSON.parse(fs.readFileSync('list.json'));
 
+/**
+ * 
+ * @param {Object} contents contents of list.json
+ * @param {string} email email to send the stuff from
+ * @param {string} password password to the above email
+ * @param {string} subject the subject of the email to send everyone
+ * @param {string} text the text of the email to send everyone
+ */
 function send_mail_to_all(contents, email, password, subject, text) {
     for (var key in contents) {
         var value = contents[key];

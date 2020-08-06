@@ -1,17 +1,8 @@
 "use strict";
 
 var num_1 = [1, 2];
-
 var num_2 = [1, 3];
-
 var tries = 3;
-
-
-//document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString();
-
-
-
-
 
 function add_fractions(x, y) {
     //x, y are lists of 2 numbers
@@ -24,8 +15,8 @@ function add_fractions(x, y) {
     return [top, bottom];
 }
 
-
 function reduce(frac){
+    //turns the fraction into its simplified form
     var num = frac[0];
     var den = frac[1];
     var gcd = function gcd(a,b){
@@ -34,22 +25,16 @@ function reduce(frac){
     gcd = gcd(num, den);
 
     return [num/gcd, den/gcd];
-  }
+}
 
-
-
-
-
-function factorize() {
-
-
+function send_scores() {
+    //does all the calculating and html stuff
     var correct_ans = add_fractions(num_1, num_2);
     correct_ans = reduce(correct_ans);
 
     if (correct_ans[1] == 1) {
         correct_ans = correct_ans[0];
     }
-
 
     var ans = document.getElementById("ans").value;
     ans = ans.split("/");
@@ -62,7 +47,6 @@ function factorize() {
     if (ans.length == 1) {
         ans = ans[0];
     }
-
 
     //check if the answer is just whitespace
     if (list_is_whitespace(ans) || ans === [""]) {
@@ -79,7 +63,6 @@ function factorize() {
 
         return;
     }
-
 
     //correct
     if (arraysEqual(correct_ans, ans)) {
@@ -114,7 +97,6 @@ function factorize() {
     num_1 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
     num_2 = [parseInt((Math.random() * 10) + 1, 10), parseInt((Math.random() * 10) + 1, 10)];
     //create two random fractions
-
 
     document.getElementById("question").innerText = `What is ${num_1[0]}/${num_1[1]} + ${num_2[0]}/${num_2[1]}?`
 

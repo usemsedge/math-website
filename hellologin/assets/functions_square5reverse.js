@@ -4,12 +4,7 @@ var num_1 = 624;
 
 var tries = 3;
 
-
-//document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString();
-
-function factorize() {
-
-
+function send_scores() {
     var correct_ans = num_1;
 
     var ans = 1;
@@ -34,7 +29,6 @@ function factorize() {
         return;
     }
 
-
     //correct
     if (correct_ans === ans) {
         document.getElementById("correct").style.backgroundColor = "#cfc";
@@ -51,7 +45,6 @@ function factorize() {
         document.getElementById("correct").style.border = "solid red";
         document.getElementById("correct").innerText = `Your last answer of ${ans_array} was Incorrect ☹`;
         document.getElementById("table_incorrect").innerHTML = `<td>${ans}  ${document.getElementById("question").innerText}</td>${document.getElementById("table_incorrect").innerHTML}`;
-
         document.getElementById("ans").value = "";
         tries -= 1;
         update_stats(document.getElementById('username').innerText, 'square5reverse', 0);
@@ -72,5 +65,4 @@ function factorize() {
 
     num_1 = (multiple_5 + change) * (multiple_5 - change);
     document.getElementById("question").innerText = `What are the closest two numbers that multiply to ${num_1}`;
-
 }

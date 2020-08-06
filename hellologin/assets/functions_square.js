@@ -4,18 +4,10 @@ var num_1 = 2;
 
 var tries = 3;
 
-
-//document.getElementById("counter").innerHTML = "Correct answers: " + correct.toString() + "<br>Incorrect answers: " + incorrect.toString();
-
-
-//do the stuff
-function root() {
+function send_scores() {
     var correct_ans = num_1;
-
-
     var ans = document.getElementById("ans").value;
     ans = parseInt(ans);
-
 
     //check if the answer is just whitespace
     if (ans === undefined || isNaN(ans)) {
@@ -60,10 +52,8 @@ function root() {
         }
     }
 
-
     get_score(document.getElementById('username').innerText, 'square');
     document.getElementById("ans").value = "";
     num_1 = parseInt(Math.random() * 100, 10);
     document.getElementById("question").innerText = `What is the square root of ${(num_1 * num_1).toString()}`;
-
 }
